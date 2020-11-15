@@ -9,11 +9,17 @@
 #include <errno.h>
 #include <stdarg.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "xt-rule.h"
 
+extern struct xt_rule_ops xt_rule_ip;
+
 static struct xt_rule_ops *get_ops (const char *domain)
 {
+	if (strcmp (domain, "ip") == 0)
+		return &xt_rule_ip;
+
 	errno = ENOSYS;
 	return NULL;
 }
