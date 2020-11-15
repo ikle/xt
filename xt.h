@@ -18,7 +18,7 @@ void xt_rule_free (struct xt_rule *o);
 
 /* xt core */
 
-struct xt *xt_alloc (const char *domain);
+struct xt *xt_alloc (void);
 void xt_free (struct xt *o);
 
 const char *xt_error (struct xt *o);

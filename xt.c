@@ -119,7 +119,7 @@ struct xt {
 	struct ht ht;
 };
 
-struct xt *xt_alloc (const char *domain)
+struct xt *xt_alloc (void)
 {
 	struct xt *o;
 
