@@ -116,21 +116,26 @@ static const struct data_type xt_chain_type = {
 /* xt core */
 
 struct xt {
+	char table[XT_NAME_LEN];
 	struct ht ht;
 };
 
-struct xt *xt_alloc (void)
+struct xt *xt_alloc (const char *table)
 {
 	struct xt *o;
 
 	if ((o = malloc (sizeof (*o))) == NULL)
 		return NULL;
 
+	if (!xt_name_init (o->table, table))
+		goto no_table;
+
 	if (!ht_init (&o->ht, &xt_chain_type))
 		goto no_ht;
 
 	return o;
 no_ht:
+no_table:
 	free (o);
 	return NULL;
 }
