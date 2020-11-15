@@ -11,10 +11,7 @@
 
 #include <stddef.h>
 
-/* xt rule */
-
-struct xt_rule *xt_rule_alloc (const char *domain);
-void xt_rule_free (struct xt_rule *o);
+#include "xt-rule.h"
 
 /* xt core */
 

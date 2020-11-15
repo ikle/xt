@@ -17,31 +17,7 @@
 
 #include "xt.h"
 
-/* xt rule */
-
-struct xt_rule {
-	struct xt_rule *next;
-};
-
-struct xt_rule *xt_rule_alloc (const char *domain)
-{
-	struct xt_rule *o;
-
-	if ((o = malloc (sizeof (*o))) == NULL)
-		return NULL;
-
-	o->next = NULL;
-	return o;
-}
-
-void xt_rule_free (struct xt_rule *o)
-{
-	free (o);
-}
-
 /* xt chain */
-
-#define XT_NAME_LEN  32
 
 static int xt_name_init (char *name, const char *value)
 {
