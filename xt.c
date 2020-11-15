@@ -52,7 +52,7 @@ static int xt_name_init (char *name, const char *value)
 	return 0;
 }
 
-SEQ_DECLARE (xt_rule);
+SEQ_DECLARE (xt_rule)
 
 struct xt_chain {
 	char name[XT_NAME_LEN];
