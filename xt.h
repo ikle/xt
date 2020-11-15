@@ -22,6 +22,7 @@ struct xt *xt_alloc (const char *table);
 void xt_free (struct xt *o);
 
 const char *xt_error (struct xt *o);
+int xt_commit (struct xt *o);
 
 int xt_is_chain (struct xt *o, const char *chain);
 

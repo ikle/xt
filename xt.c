@@ -151,6 +151,12 @@ void xt_free (struct xt *o)
 
 const char *xt_error (struct xt *o);
 
+int xt_commit (struct xt *o)
+{
+	errno = ENOSYS;
+	return 0;
+}
+
 int xt_is_chain (struct xt *o, const char *chain)
 {
 	struct xt_chain key;
