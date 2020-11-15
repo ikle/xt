@@ -149,7 +149,10 @@ void xt_free (struct xt *o)
 	free (o);
 }
 
-const char *xt_error (struct xt *o);
+const char *xt_error (struct xt *o)
+{
+	return strerror (errno);
+}
 
 int xt_commit (struct xt *o)
 {
