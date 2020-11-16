@@ -39,7 +39,9 @@ struct xt_rule {
 	struct xt_item_seq	matches;
 	struct xt_item_seq	watchers;
 	struct xt_target	*target;
+
 	struct xt_rule_ops	*ops;
+	struct xt_item		*last;	/* used to cache access */
 };
 
 struct xt_rule *xt_rule_alloc (const char *domain, ...);

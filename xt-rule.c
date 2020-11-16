@@ -42,6 +42,7 @@ struct xt_rule *xt_rule_alloc (const char *domain, ...)
 	if ((o->ops = get_ops (domain)) == NULL)
 		goto no_ops;
 
+	o->last = NULL;
 	va_start (ap, domain);
 
 	if (!o->ops->build (o, ap))
