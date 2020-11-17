@@ -14,7 +14,7 @@
 #include <data/hash.h>
 #include <data/ht.h>
 
-#include "xt-opt.h"
+#include "xt-domain.h"
 
 /* generic helpers */
 
@@ -130,7 +130,7 @@ no_ht:
 
 static struct xt_hive *hive;
 
-int xt_opt_setup (const char *domain, struct xt_opt *seq)
+int xt_domain_setup (const char *domain, struct xt_opt *seq)
 {
 	struct xt_domain key, *d;
 	int ok;

@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "xt-opt.h"
+#include "xt-domain.h"
 #include "xt-rule.h"
 
 static int xt_rule_build (struct xt_rule *o, const char *domain, va_list ap)
