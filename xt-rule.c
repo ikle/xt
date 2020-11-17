@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "xt-opt.h"
 #include "xt-rule.h"
 
 extern struct xt_rule_ops xt_rule_ip;
@@ -22,6 +23,39 @@ static struct xt_rule_ops *get_ops (const char *domain)
 
 	errno = ENOSYS;
 	return NULL;
+}
+
+static int xt_rule_build (struct xt_rule *o, const char *domain, va_list ap)
+{
+	const char *name, *arg;
+	struct xt_opt *opt;
+	int inv;
+
+	while ((name = va_arg (ap, const char *)) != NULL) {
+		if (strncmp (name, "no-", 3) == 0)
+			inv = 1, name += 3;
+		else
+			inv = 0;
+
+		if ((opt = xt_opt_lookup (domain, name)) == NULL) {
+			errno = ENOENT;
+			return 0;
+		}
+
+		if (opt->flags > 0) {
+			if ((arg = va_arg (ap, const char *)) == NULL) {
+				errno = EINVAL;
+				return 0;
+			}
+		}
+		else
+			arg = NULL;
+
+		if (!opt->set (o, inv, arg))
+			return 0;
+	}
+
+	return 1;
 }
 
 struct xt_rule *xt_rule_alloc (const char *domain, ...)
@@ -45,7 +79,7 @@ struct xt_rule *xt_rule_alloc (const char *domain, ...)
 	o->last = NULL;
 	va_start (ap, domain);
 
-	if (!o->ops->build (o, ap))
+	if (!xt_rule_build (o, domain, ap))
 		goto no_build;
 
 	va_end (ap);
