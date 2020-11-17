@@ -26,12 +26,14 @@
 struct xt_item {
 	struct xt_item *next;
 	char name[XT_NAME_LEN];
+	long long data[0];
 };
 
 SEQ_DECLARE (xt_item)
 
 struct xt_target {
 	char name[XT_NAME_LEN];
+	long long data[0];
 };
 
 struct xt_rule {
