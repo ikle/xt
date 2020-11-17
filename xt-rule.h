@@ -40,22 +40,10 @@ struct xt_rule {
 	struct xt_item_seq	watchers;
 	struct xt_target	*target;
 
-	struct xt_rule_ops	*ops;
 	struct xt_item		*last;	/* used to cache access */
 };
 
 struct xt_rule *xt_rule_alloc (const char *domain, ...);
 void xt_rule_free (struct xt_rule *o);
-
-/* domain-specific constructor/serializer methods */
-
-struct xt_rule_ops {
-	int	(*build) (struct xt_rule *o, va_list ap);
-	size_t	(*parse) (struct xt_rule *o, const char *from, size_t size);
-	size_t	(*read)  (struct xt_rule *o, const void *from, size_t size);
-
-	size_t	(*show)  (const struct xt_rule *o, char *to, size_t size);
-	size_t	(*write) (const struct xt_rule *o, void *to, size_t size);
-};
 
 #endif  /* XT_RULE_H */
