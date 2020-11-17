@@ -17,8 +17,8 @@ struct xt_opt {
 	int (*set) (struct xt_rule *o, int inv, const char *arg);
 };
 
-int xt_domain_setup (const char *domain, struct xt_opt *seq);
+int xt_domain_setup (const char *domain, const struct xt_opt *seq);
 
-struct xt_opt *xt_opt_lookup (const char *domain, const char *name);
+const struct xt_opt *xt_opt_lookup (const char *domain, const char *name);
 
 #endif  /* XT_DOMAIN_H */

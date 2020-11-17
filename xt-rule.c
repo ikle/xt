@@ -17,7 +17,7 @@
 static int xt_rule_build (struct xt_rule *o, const char *domain, va_list ap)
 {
 	const char *name, *arg;
-	struct xt_opt *opt;
+	const struct xt_opt *opt;
 	int inv;
 
 	while ((name = va_arg (ap, const char *)) != NULL) {

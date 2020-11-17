@@ -130,7 +130,7 @@ no_ht:
 
 static struct xt_hive *hive;
 
-int xt_domain_setup (const char *domain, struct xt_opt *seq)
+int xt_domain_setup (const char *domain, const struct xt_opt *seq)
 {
 	struct xt_domain key, *d;
 	int ok;
@@ -150,7 +150,7 @@ int xt_domain_setup (const char *domain, struct xt_opt *seq)
 	}
 
 	for (ok = 1; seq->name != NULL; ++seq)
-		ok &= ht_insert (&d->opts, seq, 0);
+		ok &= ht_insert (&d->opts, (void *) seq, 0);
 
 	return ok;
 no_insert:
@@ -168,7 +168,7 @@ static struct xt_domain *xt_domain_lookup (const char *domain)
 	return ht_lookup (&hive->domains, &key);
 }
 
-struct xt_opt *xt_opt_lookup (const char *domain, const char *name)
+const struct xt_opt *xt_opt_lookup (const char *domain, const char *name)
 {
 	struct xt_domain *d;
 	struct xt_opt key = { name };
