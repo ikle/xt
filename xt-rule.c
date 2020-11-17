@@ -90,3 +90,28 @@ void xt_rule_free (struct xt_rule *o)
 	free (o->target);
 	free (o);
 }
+
+/*
+ * Rule builder helper. Finds the last module by its name in the rule.
+ * If the module is not found, it creates a new one with the specified
+ * size for additional data and adds it to the end of the rule.
+ */
+struct xt_item *xt_get_match (struct xt_rule *o, const char *name, size_t size)
+{
+	struct xt_item *p;
+
+	if (o->last != NULL && strcmp (o->last->name, name) == 0)
+		return o->last;  /* found in cache */
+
+	for (p = o->matches.head; p != NULL; p = p->next)
+		if (strcmp (p->name, name) == 0)
+			goto found;
+
+	if ((p = calloc (1, sizeof (*p) + size)) == NULL)
+		return NULL;
+
+	xt_item_seq_enqueue (&o->matches, p);
+found:
+	o->last = p;  /* cache result */
+	return p;
+}

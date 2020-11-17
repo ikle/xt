@@ -46,4 +46,11 @@ struct xt_rule {
 struct xt_rule *xt_rule_alloc (const char *domain, ...);
 void xt_rule_free (struct xt_rule *o);
 
+/*
+ * Rule builder helper. Finds the last module by its name in the rule.
+ * If the module is not found, it creates a new one with the specified
+ * size for additional data and adds it to the end of the rule.
+ */
+struct xt_item *xt_get_match (struct xt_rule *o, const char *name, size_t size);
+
 #endif  /* XT_RULE_H */
