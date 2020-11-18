@@ -100,6 +100,29 @@ int get_ipv6_range (const char *from, struct ipv6_range *to)
 	       ipv6_le (&to->start, &to->stop);
 }
 
+int get_proto (const char *from, unsigned *to)
+{
+	struct protoent *p;
+	char tail;
+
+	if (strcmp (from, "any") == 0) {
+		*to = 0;
+		return 1;
+	}
+
+	if (sscanf (from, "%u%c", to, &tail) == 1)
+		return 1;
+
+	p = getprotobyname (from);
+	endprotoent ();
+
+	if (p == NULL)
+		return 0;
+
+	*to = p->p_proto;
+	return 1;
+}
+
 int get_service (const char *from, unsigned *to)
 {
 	struct addrinfo hints, *res, *p;

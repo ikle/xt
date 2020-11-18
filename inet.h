@@ -42,6 +42,7 @@ int get_ipv6_masked (const char *from, struct ipv6_masked *to);
 int get_ipv4_range (const char *from, struct ipv4_range *to);
 int get_ipv6_range (const char *from, struct ipv6_range *to);
 
+int get_proto   (const char *from, unsigned *to);
 int get_service (const char *from, unsigned *to);
 int get_port_range (const char *from, struct ip_port_range *to);
 
