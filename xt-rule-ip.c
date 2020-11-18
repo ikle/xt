@@ -114,6 +114,7 @@ static int ip_set_out (struct xt_rule *o, int inv, const char *arg)
 static int ip_set_proto (struct xt_rule *o, int inv, const char *arg)
 {
 	struct ipt_ip *m = get_match (o, "");
+	unsigned proto;
 
 	if (m == NULL)
 		return 0;
@@ -121,8 +122,11 @@ static int ip_set_proto (struct xt_rule *o, int inv, const char *arg)
 	if (inv)
 		m->invflags |= IPT_INV_PROTO;
 
-	errno = ENOSYS;
-	return 0;
+	if (!get_proto (arg, &proto))
+		return 0;
+
+	m->proto = proto;
+	return 1;
 }
 
 static int ip_set_frag (struct xt_rule *o, int inv, const char *arg)
