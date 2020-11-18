@@ -103,6 +103,28 @@ void xt_rule_free (struct xt_rule *o)
 	free (o);
 }
 
+int xt_rule_link (struct xt_rule *o, const char *chain)
+{
+	struct xt_target *t;
+
+	if (o->target != NULL) {
+		errno = EINVAL;
+		return 0;
+	}
+
+	if ((t = calloc (1, sizeof (*t))) == NULL)
+		return 0;
+
+	if (!xt_name_init (t->name, chain))
+		goto no_name;
+
+	o->target = t;
+	return 1;
+no_name:
+	free (t);
+	return 0;
+}
+
 /*
  * Rule builder helper. Finds the last module by its name in the rule.
  * If the module is not found, it creates a new one with the specified
