@@ -7,7 +7,6 @@
  */
 
 #include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,15 +17,6 @@
 #include "xt.h"
 
 /* xt chain */
-
-static int xt_name_init (char *name, const char *value)
-{
-	if (snprintf (name, XT_NAME_LEN, "%s", name) < XT_NAME_LEN)
-		return 1;
-
-	errno = EINVAL;
-	return 0;
-}
 
 SEQ_DECLARE (xt_rule)
 

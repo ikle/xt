@@ -8,11 +8,23 @@
 
 #include <errno.h>
 #include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "xt-domain.h"
 #include "xt-rule.h"
+
+/* generic helpers */
+
+int xt_name_init (char *name, const char *value)
+{
+	if (snprintf (name, XT_NAME_LEN, "%s", name) < XT_NAME_LEN)
+		return 1;
+
+	errno = EINVAL;
+	return 0;
+}
 
 static int xt_rule_build (struct xt_rule *o, const char *domain, va_list ap)
 {

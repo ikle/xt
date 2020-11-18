@@ -16,6 +16,8 @@
 
 #define XT_NAME_LEN  32
 
+int xt_name_init (char *name, const char *value);
+
 /*
  * Note that matches, watchers and targets MUST NOT reference non-constant
  * external objects and MUST be allocated with standard malloc. The structures

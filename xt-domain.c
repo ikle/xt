@@ -7,7 +7,6 @@
  */
 
 #include <errno.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -15,17 +14,6 @@
 #include <data/ht.h>
 
 #include "xt-domain.h"
-
-/* generic helpers */
-
-static int xt_name_init (char *name, const char *value)
-{
-	if (snprintf (name, XT_NAME_LEN, "%s", name) < XT_NAME_LEN)
-		return 1;
-
-	errno = EINVAL;
-	return 0;
-}
 
 /* xt opt */
 
