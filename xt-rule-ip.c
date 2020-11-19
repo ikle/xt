@@ -23,8 +23,103 @@ struct xt_match_ip {
 	struct ipt_ip	data;
 };
 
-static const struct xt_item_ops xt_ip_ops = {
+static size_t show_ipv4 (char *to, size_t size, const struct in_addr *o)
+{
+	uint32_t addr = ntohl (o->s_addr);
+	unsigned char a = (addr >> 24) & 0xff;
+	unsigned char b = (addr >> 16) & 0xff;
+	unsigned char c = (addr >>  8) & 0xff;
+	unsigned char d = (addr >>  0) & 0xff;
 
+	return snprintf (to, size, "%u.%u.%u.%u", a, b, c, d);
+}
+
+static const char *get_inv (int inv)
+{
+	return inv ? "no-" : "";
+}
+
+static size_t show_addr (char *to, size_t size, int inv, const char *prefix,
+			 const struct in_addr *o)
+{
+	size_t len;
+
+	if (o->s_addr == 0)
+		return 0;
+
+	len = snprintf (to, size, " %s%s ", get_inv (inv), prefix);
+	size = size > len ? size - len : 0;
+	to += len;
+
+	return len + show_ipv4 (to, size, o);
+}
+
+static size_t show_iface (char *to, size_t size, int inv, const char *prefix,
+			  const char *name, const unsigned char *mask)
+{
+	char pattern[IFNAMSIZ + 1];
+	size_t i;
+
+	if (mask[0] == 0)
+		return 0;
+
+	for (i = 0; i < IFNAMSIZ;) {
+		pattern[i] = (name[i] | mask[i]) == 0 ? '+' : name[i];
+
+		if (mask[i++] == 0)
+			break;
+	}
+
+	pattern[i] = '\0';
+	return snprintf (to, size, " %s%s %s", get_inv (inv), prefix, pattern);
+}
+
+static size_t show_proto (char *to, size_t size, int inv, unsigned proto)
+{
+	if (proto == 0)
+		return 0;
+
+	return snprintf (to, size, " %sproto %u", get_inv (inv), proto);
+}
+
+static size_t show_frag (char *to, size_t size, int inv, int frag)
+{
+	if (frag == 0)
+		return 0;
+
+	return snprintf (to, size, " %sfrag", get_inv (inv));
+}
+
+#define WRITE_OPT(type, ...)						\
+	do {								\
+		size_t len = show_##type (to, size, __VA_ARGS__);	\
+		size = size > len ? size - len : 0;			\
+		to += len, total += len;				\
+	}								\
+	while (0)
+
+static size_t xt_ip_show (const struct xt_item *xi, char *to, size_t size)
+{
+	const struct xt_match_ip *m = (const void *) xi;
+	const struct ipt_ip *o = &m->data;
+	size_t total = 0;
+
+#define INV(name)  (o->invflags & IPT_INV_##name)
+
+	WRITE_OPT (addr,  INV (SRCIP),   "src", &o->src);
+	WRITE_OPT (addr,  INV (DSTIP),   "dst", &o->dst);
+	WRITE_OPT (iface, INV (VIA_IN),  "in",  o->iniface,  o->iniface_mask);
+	WRITE_OPT (iface, INV (VIA_OUT), "out", o->outiface, o->outiface_mask);
+	WRITE_OPT (proto, INV (PROTO),   o->proto);
+	WRITE_OPT (frag,  INV (FRAG),    o->flags & IPT_F_FRAG);
+
+#undef INV
+
+	return total;
+}
+
+static const struct xt_item_ops xt_ip_ops = {
+	xt_ip_show,
 };
 
 static struct ipt_ip *get_match (struct xt_rule *o, const char *name)
