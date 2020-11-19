@@ -74,12 +74,22 @@ static size_t show_iface (char *to, size_t size, int inv, const char *prefix,
 	return snprintf (to, size, " %s%s %s", get_inv (inv), prefix, pattern);
 }
 
+#include <netdb.h>
+
 static size_t show_proto (char *to, size_t size, int inv, unsigned proto)
 {
+	struct protoent *pe;
+
 	if (proto == 0)
 		return 0;
 
-	return snprintf (to, size, " %sproto %u", get_inv (inv), proto);
+	pe = getprotobynumber (proto);
+	endprotoent ();
+
+	if (pe == NULL)
+		return snprintf (to, size, " %sproto %u", get_inv (inv), proto);
+
+	return snprintf (to, size, " %sproto %s", get_inv (inv), pe->p_name);
 }
 
 static size_t show_frag (char *to, size_t size, int inv, int frag)
