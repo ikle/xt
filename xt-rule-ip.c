@@ -142,9 +142,9 @@ static int ip_set_frag (struct xt_rule *o, int inv, const char *arg)
 		return 0;
 
 	if (inv)
-		m->invflags &= ~IPT_F_FRAG;
-	else
-		m->invflags |= IPT_F_FRAG;
+		m->invflags |= IPT_INV_FRAG;
+
+	m->flags |= IPT_F_FRAG;
 
 	return 1;
 }
