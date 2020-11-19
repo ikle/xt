@@ -28,7 +28,13 @@ int xt_name_init (char *name, const char *value);
 struct xt_item {
 	struct xt_item *next;
 	char name[XT_NAME_LEN];
+	const struct xt_item_ops *ops;
 	long long data[0];
+};
+
+struct xt_item_ops {
+	size_t (*show)  (const struct xt_item *o, char *to, size_t size);
+	size_t (*write) (const struct xt_item *o, char *to, size_t size);
 };
 
 SEQ_DECLARE (xt_item)
@@ -57,6 +63,7 @@ int xt_rule_link (struct xt_rule *o, const char *chain);
  * If the module is not found, it creates a new one with the specified
  * size for additional data and adds it to the end of the rule.
  */
-struct xt_item *xt_get_match (struct xt_rule *o, const char *name, size_t size);
+struct xt_item *xt_get_match (struct xt_rule *o, const char *name,
+			      const struct xt_item_ops *ops, size_t size);
 
 #endif  /* XT_RULE_H */

@@ -130,7 +130,8 @@ no_name:
  * If the module is not found, it creates a new one with the specified
  * size for additional data and adds it to the end of the rule.
  */
-struct xt_item *xt_get_match (struct xt_rule *o, const char *name, size_t size)
+struct xt_item *xt_get_match (struct xt_rule *o, const char *name,
+			      const struct xt_item_ops *ops, size_t size)
 {
 	struct xt_item *p;
 
@@ -144,6 +145,7 @@ struct xt_item *xt_get_match (struct xt_rule *o, const char *name, size_t size)
 	if ((p = calloc (1, sizeof (*p) + size)) == NULL)
 		return NULL;
 
+	p->ops = ops;
 	xt_item_seq_enqueue (&o->matches, p);
 found:
 	o->last = p;  /* cache result */

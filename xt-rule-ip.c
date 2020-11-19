@@ -23,11 +23,16 @@ struct xt_match_ip {
 	struct ipt_ip	data;
 };
 
+static const struct xt_item_ops xt_ip_ops = {
+
+};
+
 static struct ipt_ip *get_match (struct xt_rule *o, const char *name)
 {
 	struct xt_match_ip *m;
 
-	if ((m = (void *) xt_get_match (o, name, sizeof (m->data))) == NULL)
+	m = (void *) xt_get_match (o, name, &xt_ip_ops, sizeof (m->data));
+	if (m == NULL)
 		return NULL;
 
 	return &m->data;
