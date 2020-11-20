@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <strings.h>
 
 #include <arpa/inet.h>
 
@@ -33,6 +34,24 @@ static int make_mask (unsigned prefix, struct in_addr *mask)
 	return 1;
 }
 
+static int calc_prefix (const struct in_addr *mask, unsigned *prefix)
+{
+	uint32_t m = mask->s_addr;
+
+	if (m == 0) {
+		*prefix = 32;
+		return 1;
+	}
+
+	if (~(m | (m - 1)) != 0) {
+		*prefix = 0;  /* prefix can not be calculated */
+		return 1;
+	}
+
+	*prefix = 33 - ffs (m);  /* NOTE: on POSIX sizeof (int) >= 32 */
+	return 1;
+}
+
 int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 {
 	char addr[IPV4_LEN], mask[IPV4_LEN], tail;
@@ -54,8 +73,8 @@ plain:
 cidr:
 	return make_mask (to->prefix, &to->mask) && scan_ipv4 (addr, &to->addr);
 classic:
-	to->prefix = 0;
-	return scan_ipv4 (addr, &to->addr) && scan_ipv4 (mask, &to->mask);
+	return scan_ipv4 (addr, &to->addr) && scan_ipv4 (mask, &to->mask) &&
+	       calc_prefix (&to->mask, &to->prefix);
 }
 
 int scan_ipv4_range (const char *from, struct ipv4_range *to)
