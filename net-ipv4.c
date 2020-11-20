@@ -100,26 +100,26 @@ size_t print_ipv4 (char *to, size_t size, const struct in_addr *from)
 
 size_t print_ipv4_masked (char *to, size_t size, const struct ipv4_masked *o)
 {
-	struct ipv4_masked a = *o;
+	unsigned prefix = 0;
 	size_t len;
 
 	if (o->prefix == 0)
-		calc_prefix (&a.mask, &a.prefix);
+		calc_prefix (&o->mask, &prefix);
 
-	len = print_ipv4 (to, size, &a.addr);
+	len = print_ipv4 (to, size, &o->addr);
 
-	if (a.prefix == 32)
+	if (prefix == 32)
 		return len;  /* it is a host address */
 
 	size = size > len ? size - len : 0;
 	to += len;
 
-	if (a.prefix != 0)
-		return len + snprintf (to, size, "/%u", a.prefix);
+	if (prefix != 0)
+		return len + snprintf (to, size, "/%u", prefix);
 
 	snprintf (to, size, "/");
 	size = size > 1 ? size - 1 : 0;
 	to += 1;
 
-	return len + 1 + print_ipv4 (to, size, &a.mask);;
+	return len + 1 + print_ipv4 (to, size, &o->mask);
 }
