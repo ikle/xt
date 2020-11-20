@@ -1,0 +1,28 @@
+/*
+ * IPv6 address helpers
+ *
+ * Copyright (c) 2017-2020 Alexei A. Smekalkine <ikle@ikle.ru>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+#ifndef NET_IPV6_H
+#define NET_IPV6_H  1
+
+#include <netinet/in.h>
+
+struct ipv6_masked {
+	struct in6_addr addr;
+	unsigned mask;
+};
+
+struct ipv6_range {
+	struct in6_addr start;
+	struct in6_addr stop;
+};
+
+int get_ipv6 (const char *from, struct in6_addr *to);
+int get_ipv6_masked (const char *from, struct ipv6_masked *to);
+int get_ipv6_range (const char *from, struct ipv6_range *to);
+
+#endif  /* NET_IPV6_H */
