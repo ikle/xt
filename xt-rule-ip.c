@@ -118,8 +118,21 @@ static size_t xt_ip_show (const struct xt_item *xi, char *to, size_t size)
 	return total;
 }
 
+static size_t xt_ip_write (const struct xt_item *xi, void *to, size_t size)
+{
+	const struct xt_match_ip *m = (const void *) xi;
+	const struct ipt_ip *o = &m->data;
+
+	if (size > sizeof (*o))
+		size = sizeof (*o);
+
+	memcpy (to, o, size);
+	return size;
+}
+
 static const struct xt_item_ops xt_ip_ops = {
 	xt_ip_show,
+	xt_ip_write,
 };
 
 static struct ipt_ip *get_match (struct xt_rule *o, const char *name)
