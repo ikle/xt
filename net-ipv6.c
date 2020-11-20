@@ -24,6 +24,39 @@ int scan_ipv6 (const char *from, struct in6_addr *to)
 	return inet_pton (AF_INET6, from, to);
 }
 
+static int make_mask (unsigned prefix, struct in6_addr *mask)
+{
+	if (prefix > 128)
+		return 0;
+
+	if (prefix > 96) {
+		mask->s6_addr32[0] = htonl (~0L << (128 - prefix));
+		goto m96;
+	}
+
+	mask->s6_addr32[0] = ~0L;
+
+	if (prefix > 64) {
+		mask->s6_addr32[1] = htonl (~0L << (96 - prefix));
+		goto m64;
+	}
+
+	mask->s6_addr32[1] = ~0L;
+
+	if (prefix > 32) {
+		mask->s6_addr32[2] = htonl (~0L << (64 - prefix));
+		goto m32;
+	}
+
+	mask->s6_addr32[2] = ~0L;
+	mask->s6_addr32[3] = htonl (~0L << (32 - prefix));
+	return 1;
+m96:	mask->s6_addr32[1] = 0;
+m64:	mask->s6_addr32[2] = 0;
+m32:	mask->s6_addr32[3] = 0;
+	return 1;
+}
+
 int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 {
 	char addr[IPV6_LEN], mask[IPV6_LEN], tail;
@@ -42,9 +75,8 @@ int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 	return 0;
 plain:
 	to->prefix = 128;
-	return scan_ipv6 (addr, &to->addr);
 cidr:
-	return to->prefix <= 128 && scan_ipv6 (addr, &to->addr);
+	return make_mask (to->prefix, &to->mask) && scan_ipv6 (addr, &to->addr);
 classic:
 	to->prefix = 0;
 	return scan_ipv6 (addr, &to->addr) && scan_ipv6 (mask, &to->mask);

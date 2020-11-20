@@ -24,6 +24,15 @@ int scan_ipv4 (const char *from, struct in_addr *to)
 	return inet_pton (AF_INET, from, to);
 }
 
+static int make_mask (unsigned prefix, struct in_addr *mask)
+{
+	if (prefix > 32)
+		return 0;
+
+	mask->s_addr = htonl (~0L << (32 - prefix));
+	return 1;
+}
+
 int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 {
 	char addr[IPV4_LEN], mask[IPV4_LEN], tail;
@@ -42,9 +51,8 @@ int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 	return 0;
 plain:
 	to->prefix = 32;
-	return scan_ipv4 (addr, &to->addr);
 cidr:
-	return to->prefix <= 32 && scan_ipv4 (addr, &to->addr);
+	return make_mask (to->prefix, &to->mask) && scan_ipv4 (addr, &to->addr);
 classic:
 	to->prefix = 0;
 	return scan_ipv4 (addr, &to->addr) && scan_ipv4 (mask, &to->mask);
