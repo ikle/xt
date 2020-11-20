@@ -28,6 +28,9 @@ int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 {
 	char addr[IPV6_LEN], mask[IPV6_LEN], tail;
 
+	if (sscanf (from, IPV6_FORMAT "%c", addr, &tail) == 1)
+		goto plain;
+
 	if (sscanf (from, IPV6_FORMAT "/%u%c",
 		    addr, &to->prefix, &tail) == 2)
 		goto cidr;
@@ -37,6 +40,9 @@ int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 		goto classic;
 
 	return 0;
+plain:
+	to->prefix = 128;
+	return scan_ipv6 (addr, &to->addr);
 cidr:
 	return to->prefix <= 128 && scan_ipv6 (addr, &to->addr);
 classic:

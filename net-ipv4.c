@@ -28,6 +28,9 @@ int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 {
 	char addr[IPV4_LEN], mask[IPV4_LEN], tail;
 
+	if (sscanf (from, IPV4_FORMAT "%c", addr, &tail) == 1)
+		goto plain;
+
 	if (sscanf (from, IPV4_FORMAT "/%u%c",
 		    addr, &to->prefix, &tail) == 2)
 		goto cidr;
@@ -37,6 +40,9 @@ int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 		goto classic;
 
 	return 0;
+plain:
+	to->prefix = 32;
+	return scan_ipv4 (addr, &to->addr);
 cidr:
 	return to->prefix <= 32 && scan_ipv4 (addr, &to->addr);
 classic:
