@@ -34,7 +34,7 @@ struct xt_item {
 
 struct xt_item_ops {
 	size_t (*show)  (const struct xt_item *o, char *to, size_t size);
-	size_t (*write) (const struct xt_item *o, char *to, size_t size);
+	size_t (*write) (const struct xt_item *o, void *to, size_t size);
 };
 
 SEQ_DECLARE (xt_item)
