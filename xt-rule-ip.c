@@ -204,37 +204,26 @@ static int set_iface (const char *iface, char *name, unsigned char *mask)
 DECLARE_OP (iface, in,  VIA_IN,  m->iniface,  m->iniface_mask)
 DECLARE_OP (iface, out, VIA_OUT, m->outiface, m->outiface_mask)
 
-static int ip_set_proto (struct xt_rule *o, int inv, const char *arg)
+static int set_proto (const char *arg, unsigned short *to)
 {
-	struct ipt_ip *m = get_match (o, "");
 	unsigned proto;
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_PROTO;
 
 	if (!get_proto (arg, &proto))
 		return 0;
 
-	m->proto = proto;
+	*to = proto;
 	return 1;
 }
 
-static int ip_set_frag (struct xt_rule *o, int inv, const char *arg)
+DECLARE_OP (proto, proto, PROTO, &m->proto)
+
+static int set_frag (const char *arg, unsigned char *flags)
 {
-	struct ipt_ip *m = get_match (o, "");
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_FRAG;
-
-	m->flags |= IPT_F_FRAG;
+	*flags |= IPT_F_FRAG;
 	return 1;
 }
+
+DECLARE_OP (frag, frag, FRAG, &m->flags)
 
 static int ip_set_jump (struct xt_rule *o, int inv, const char *arg)
 {
