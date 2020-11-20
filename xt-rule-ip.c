@@ -29,8 +29,9 @@ static const char *get_inv (int inv)
 }
 
 static size_t show_addr (char *to, size_t size, int inv, const char *prefix,
-			 const struct in_addr *o)
+			 const struct in_addr *o, const struct in_addr *mask)
 {
+	struct ipv4_masked a = { *o, *mask, 0 };
 	size_t len;
 
 	if (o->s_addr == 0)
@@ -40,7 +41,7 @@ static size_t show_addr (char *to, size_t size, int inv, const char *prefix,
 	size = size > len ? size - len : 0;
 	to += len;
 
-	return len + print_ipv4 (to, size, o);
+	return len + print_ipv4_masked (to, size, &a);
 }
 
 static size_t show_iface (char *to, size_t size, int inv, const char *prefix,
@@ -105,8 +106,8 @@ static size_t xt_ip_show (const struct xt_item *xi, char *to, size_t size)
 
 #define INV(name)  (o->invflags & IPT_INV_##name)
 
-	WRITE_OPT (addr,  INV (SRCIP),   "src", &o->src);
-	WRITE_OPT (addr,  INV (DSTIP),   "dst", &o->dst);
+	WRITE_OPT (addr,  INV (SRCIP),   "src", &o->src, &o->smsk);
+	WRITE_OPT (addr,  INV (DSTIP),   "dst", &o->dst, &o->dmsk);
 	WRITE_OPT (iface, INV (VIA_IN),  "in",  o->iniface,  o->iniface_mask);
 	WRITE_OPT (iface, INV (VIA_OUT), "out", o->outiface, o->outiface_mask);
 	WRITE_OPT (proto, INV (PROTO),   o->proto);
