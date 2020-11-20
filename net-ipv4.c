@@ -107,6 +107,10 @@ size_t print_ipv4_masked (char *to, size_t size, const struct ipv4_masked *o)
 		calc_prefix (&a.mask, &a.prefix);
 
 	len = print_ipv4 (to, size, &a.addr);
+
+	if (a.prefix == 32)
+		return len;  /* it is a host address */
+
 	size = size > len ? size - len : 0;
 	to += len;
 
