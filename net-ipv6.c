@@ -26,13 +26,22 @@ int scan_ipv6 (const char *from, struct in6_addr *to)
 
 int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 {
-	char addr[IPV6_LEN], tail;
+	char addr[IPV6_LEN], mask[IPV6_LEN], tail;
 
 	if (sscanf (from, IPV6_FORMAT "/%u%c",
-		    addr, &to->mask, &tail) != 2)
-		return 0;
+		    addr, &to->prefix, &tail) == 2)
+		goto cidr;
 
-	return to->mask <= 128 && scan_ipv6 (addr, &to->addr);
+	if (sscanf (from, IPV6_FORMAT "/" IPV6_FORMAT "%c",
+		    addr, mask, &tail) == 2)
+		goto classic;
+
+	return 0;
+cidr:
+	return to->prefix <= 128 && scan_ipv6 (addr, &to->addr);
+classic:
+	to->prefix = 0;
+	return scan_ipv6 (addr, &to->addr) && scan_ipv6 (mask, &to->mask);
 }
 
 static int ipv6_le (const struct in6_addr *a, const struct in6_addr *b)

@@ -26,13 +26,22 @@ int scan_ipv4 (const char *from, struct in_addr *to)
 
 int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 {
-	char addr[IPV4_LEN], tail;
+	char addr[IPV4_LEN], mask[IPV4_LEN], tail;
 
 	if (sscanf (from, IPV4_FORMAT "/%u%c",
-		    addr, &to->mask, &tail) != 2)
-		return 0;
+		    addr, &to->prefix, &tail) == 2)
+		goto cidr;
 
-	return to->mask <= 32 && scan_ipv4 (addr, &to->addr);
+	if (sscanf (from, IPV4_FORMAT "/" IPV4_FORMAT "%c",
+		    addr, mask, &tail) == 2)
+		goto classic;
+
+	return 0;
+cidr:
+	return to->prefix <= 32 && scan_ipv4 (addr, &to->addr);
+classic:
+	to->prefix = 0;
+	return scan_ipv4 (addr, &to->addr) && scan_ipv4 (mask, &to->mask);
 }
 
 int scan_ipv4_range (const char *from, struct ipv4_range *to)

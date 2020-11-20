@@ -12,8 +12,8 @@
 #include <netinet/in.h>
 
 struct ipv4_masked {
-	struct in_addr addr;
-	unsigned mask;
+	struct in_addr addr, mask;
+	unsigned prefix;
 };
 
 struct ipv4_range {

@@ -12,8 +12,8 @@
 #include <netinet/in.h>
 
 struct ipv6_masked {
-	struct in6_addr addr;
-	unsigned mask;
+	struct in6_addr addr, mask;
+	unsigned prefix;
 };
 
 struct ipv6_range {
