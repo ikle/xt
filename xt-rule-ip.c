@@ -23,17 +23,6 @@ struct xt_match_ip {
 	struct ipt_ip	data;
 };
 
-static size_t show_ipv4 (char *to, size_t size, const struct in_addr *o)
-{
-	uint32_t addr = ntohl (o->s_addr);
-	unsigned char a = (addr >> 24) & 0xff;
-	unsigned char b = (addr >> 16) & 0xff;
-	unsigned char c = (addr >>  8) & 0xff;
-	unsigned char d = (addr >>  0) & 0xff;
-
-	return snprintf (to, size, "%u.%u.%u.%u", a, b, c, d);
-}
-
 static const char *get_inv (int inv)
 {
 	return inv ? "no-" : "";
@@ -51,7 +40,7 @@ static size_t show_addr (char *to, size_t size, int inv, const char *prefix,
 	size = size > len ? size - len : 0;
 	to += len;
 
-	return len + show_ipv4 (to, size, o);
+	return len + print_ipv4 (to, size, o);
 }
 
 static size_t show_iface (char *to, size_t size, int inv, const char *prefix,
