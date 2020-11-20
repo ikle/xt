@@ -132,6 +132,18 @@ static struct ipt_ip *get_match (struct xt_rule *o, const char *name)
 	return &m->data;
 }
 
+static int set_addr (const char *v, struct in_addr *addr, struct in_addr *mask)
+{
+	struct ipv4_masked a;
+
+	if (!scan_ipv4_masked (v, &a))
+		return 0;
+
+	*addr = a.addr;
+	*mask = a.mask;
+	return 1;
+}
+
 static int ip_set_src (struct xt_rule *o, int inv, const char *arg)
 {
 	struct ipt_ip *m = get_match (o, "");
@@ -142,7 +154,7 @@ static int ip_set_src (struct xt_rule *o, int inv, const char *arg)
 	if (inv)
 		m->invflags |= IPT_INV_SRCIP;
 
-	return scan_ipv4 (arg, &m->src);
+	return set_addr (arg, &m->src, &m->smsk);
 }
 
 static int ip_set_dst (struct xt_rule *o, int inv, const char *arg)
@@ -155,7 +167,7 @@ static int ip_set_dst (struct xt_rule *o, int inv, const char *arg)
 	if (inv)
 		m->invflags |= IPT_INV_DSTIP;
 
-	return scan_ipv4 (arg, &m->dst);
+	return set_addr (arg, &m->dst, &m->dmsk);
 }
 
 static int set_iface (const char *iface, char *name, unsigned char *mask)
