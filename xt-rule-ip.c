@@ -146,6 +146,20 @@ static struct ipt_ip *get_match (struct xt_rule *o, const char *name)
 	return &m->data;
 }
 
+#define DECLARE_OP(type, name, flag, ...)				\
+static int ip_set_##name (struct xt_rule *o, int inv, const char *arg)	\
+{									\
+	struct ipt_ip *m = get_match (o, "");				\
+									\
+	if (m == NULL)							\
+		return 0;						\
+									\
+	if (inv)							\
+		m->invflags |= IPT_INV_##flag;				\
+									\
+	return set_##type (arg, __VA_ARGS__);				\
+}
+
 static int set_addr (const char *v, struct in_addr *addr, struct in_addr *mask)
 {
 	struct ipv4_masked a;
@@ -158,31 +172,8 @@ static int set_addr (const char *v, struct in_addr *addr, struct in_addr *mask)
 	return 1;
 }
 
-static int ip_set_src (struct xt_rule *o, int inv, const char *arg)
-{
-	struct ipt_ip *m = get_match (o, "");
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_SRCIP;
-
-	return set_addr (arg, &m->src, &m->smsk);
-}
-
-static int ip_set_dst (struct xt_rule *o, int inv, const char *arg)
-{
-	struct ipt_ip *m = get_match (o, "");
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_DSTIP;
-
-	return set_addr (arg, &m->dst, &m->dmsk);
-}
+DECLARE_OP (addr, src, SRCIP, &m->src, &m->smsk)
+DECLARE_OP (addr, dst, DSTIP, &m->dst, &m->dmsk)
 
 static int set_iface (const char *iface, char *name, unsigned char *mask)
 {
@@ -210,31 +201,8 @@ static int set_iface (const char *iface, char *name, unsigned char *mask)
 	return 1;
 }
 
-static int ip_set_in (struct xt_rule *o, int inv, const char *arg)
-{
-	struct ipt_ip *m = get_match (o, "");
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_VIA_IN;
-
-	return set_iface (arg, m->iniface, m->iniface_mask);
-}
-
-static int ip_set_out (struct xt_rule *o, int inv, const char *arg)
-{
-	struct ipt_ip *m = get_match (o, "");
-
-	if (m == NULL)
-		return 0;
-
-	if (inv)
-		m->invflags |= IPT_INV_VIA_OUT;
-
-	return set_iface (arg, m->outiface, m->outiface_mask);
-}
+DECLARE_OP (iface, in,  VIA_IN,  m->iniface,  m->iniface_mask)
+DECLARE_OP (iface, out, VIA_OUT, m->outiface, m->outiface_mask)
 
 static int ip_set_proto (struct xt_rule *o, int inv, const char *arg)
 {
