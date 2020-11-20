@@ -21,8 +21,8 @@ struct ipv6_range {
 	struct in6_addr stop;
 };
 
-int get_ipv6 (const char *from, struct in6_addr *to);
-int get_ipv6_masked (const char *from, struct ipv6_masked *to);
-int get_ipv6_range (const char *from, struct ipv6_range *to);
+int scan_ipv6 (const char *from, struct in6_addr *to);
+int scan_ipv6_masked (const char *from, struct ipv6_masked *to);
+int scan_ipv6_range (const char *from, struct ipv6_range *to);
 
 #endif  /* NET_IPV6_H */

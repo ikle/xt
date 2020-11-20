@@ -19,12 +19,12 @@
 #define IPV6_LEN  46
 #define IPV6_FORMAT  "%45[.0-9:A-Fa-f]"
 
-int get_ipv6 (const char *from, struct in6_addr *to)
+int scan_ipv6 (const char *from, struct in6_addr *to)
 {
 	return inet_pton (AF_INET6, from, to);
 }
 
-int get_ipv6_masked (const char *from, struct ipv6_masked *to)
+int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 {
 	char addr[IPV6_LEN], tail;
 
@@ -32,7 +32,7 @@ int get_ipv6_masked (const char *from, struct ipv6_masked *to)
 		    addr, &to->mask, &tail) != 2)
 		return 0;
 
-	return to->mask <= 128 && get_ipv6 (addr, &to->addr);
+	return to->mask <= 128 && scan_ipv6 (addr, &to->addr);
 }
 
 static int ipv6_le (const struct in6_addr *a, const struct in6_addr *b)
@@ -56,7 +56,7 @@ static int ipv6_le (const struct in6_addr *a, const struct in6_addr *b)
 	return l <= r;
 }
 
-int get_ipv6_range (const char *from, struct ipv6_range *to)
+int scan_ipv6_range (const char *from, struct ipv6_range *to)
 {
 	char start[IPV6_LEN], stop[IPV6_LEN], tail;
 
@@ -64,6 +64,6 @@ int get_ipv6_range (const char *from, struct ipv6_range *to)
 		    start, stop, &tail) != 2)
 		return 0;
 
-	return get_ipv6 (start, &to->start) && get_ipv6 (stop, &to->stop) &&
+	return scan_ipv6 (start, &to->start) && scan_ipv6 (stop, &to->stop) &&
 	       ipv6_le (&to->start, &to->stop);
 }

@@ -21,8 +21,8 @@ struct ipv4_range {
 	struct in_addr stop;
 };
 
-int get_ipv4 (const char *from, struct in_addr *to);
-int get_ipv4_masked (const char *from, struct ipv4_masked *to);
-int get_ipv4_range (const char *from, struct ipv4_range *to);
+int scan_ipv4 (const char *from, struct in_addr *to);
+int scan_ipv4_masked (const char *from, struct ipv4_masked *to);
+int scan_ipv4_range (const char *from, struct ipv4_range *to);
 
 #endif  /* NET_IPV4_H */

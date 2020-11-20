@@ -153,7 +153,7 @@ static int ip_set_src (struct xt_rule *o, int inv, const char *arg)
 	if (inv)
 		m->invflags |= IPT_INV_SRCIP;
 
-	return get_ipv4 (arg, &m->src);
+	return scan_ipv4 (arg, &m->src);
 }
 
 static int ip_set_dst (struct xt_rule *o, int inv, const char *arg)
@@ -166,7 +166,7 @@ static int ip_set_dst (struct xt_rule *o, int inv, const char *arg)
 	if (inv)
 		m->invflags |= IPT_INV_DSTIP;
 
-	return get_ipv4 (arg, &m->dst);
+	return scan_ipv4 (arg, &m->dst);
 }
 
 static int set_iface (const char *iface, char *name, unsigned char *mask)

@@ -19,12 +19,12 @@
 #define IPV4_LEN  16
 #define IPV4_FORMAT  "%15[.0-9]"
 
-int get_ipv4 (const char *from, struct in_addr *to)
+int scan_ipv4 (const char *from, struct in_addr *to)
 {
 	return inet_pton (AF_INET, from, to);
 }
 
-int get_ipv4_masked (const char *from, struct ipv4_masked *to)
+int scan_ipv4_masked (const char *from, struct ipv4_masked *to)
 {
 	char addr[IPV4_LEN], tail;
 
@@ -32,10 +32,10 @@ int get_ipv4_masked (const char *from, struct ipv4_masked *to)
 		    addr, &to->mask, &tail) != 2)
 		return 0;
 
-	return to->mask <= 32 && get_ipv4 (addr, &to->addr);
+	return to->mask <= 32 && scan_ipv4 (addr, &to->addr);
 }
 
-int get_ipv4_range (const char *from, struct ipv4_range *to)
+int scan_ipv4_range (const char *from, struct ipv4_range *to)
 {
 	char start[IPV4_LEN], stop[IPV4_LEN], tail;
 
@@ -43,6 +43,6 @@ int get_ipv4_range (const char *from, struct ipv4_range *to)
 		    start, stop, &tail) != 2)
 		return 0;
 
-	return get_ipv4 (start, &to->start) && get_ipv4 (stop, &to->stop) &&
+	return scan_ipv4 (start, &to->start) && scan_ipv4 (stop, &to->stop) &&
 	       ntohl (to->start.s_addr) <= ntohl (to->stop.s_addr);
 }
