@@ -265,7 +265,6 @@ static int ip_set_frag (struct xt_rule *o, int inv, const char *arg)
 		m->invflags |= IPT_INV_FRAG;
 
 	m->flags |= IPT_F_FRAG;
-
 	return 1;
 }
 
