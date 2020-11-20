@@ -46,3 +46,12 @@ int scan_ipv4_range (const char *from, struct ipv4_range *to)
 	return scan_ipv4 (start, &to->start) && scan_ipv4 (stop, &to->stop) &&
 	       ntohl (to->start.s_addr) <= ntohl (to->stop.s_addr);
 }
+
+size_t print_ipv4 (char *to, size_t size, const struct in_addr *from)
+{
+	char addr[IPV4_LEN];
+
+	(void) inet_ntop (AF_INET, from, to, sizeof (addr));
+
+	return snprintf (to, size, "%s", addr);
+}

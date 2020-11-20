@@ -25,4 +25,6 @@ int scan_ipv4 (const char *from, struct in_addr *to);
 int scan_ipv4_masked (const char *from, struct ipv4_masked *to);
 int scan_ipv4_range (const char *from, struct ipv4_range *to);
 
+size_t print_ipv4 (char *to, size_t size, const struct in_addr *from);
+
 #endif  /* NET_IPV4_H */

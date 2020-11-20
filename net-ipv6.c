@@ -67,3 +67,12 @@ int scan_ipv6_range (const char *from, struct ipv6_range *to)
 	return scan_ipv6 (start, &to->start) && scan_ipv6 (stop, &to->stop) &&
 	       ipv6_le (&to->start, &to->stop);
 }
+
+size_t print_ipv6 (char *to, size_t size, const struct in6_addr *from)
+{
+	char addr[IPV6_LEN];
+
+	(void) inet_ntop (AF_INET6, from, to, sizeof (addr));
+
+	return snprintf (to, size, "%s", addr);
+}
