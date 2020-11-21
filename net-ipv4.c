@@ -38,13 +38,8 @@ static int calc_prefix (const struct in_addr *mask, unsigned *prefix)
 {
 	uint32_t m = ntohl (mask->s_addr);
 
-	if (m == 0) {
-		*prefix = 32;
-		return 1;
-	}
-
-	if (~(m | (m - 1)) != 0) {
-		*prefix = 0;  /* prefix can not be calculated */
+	if (m == 0 || ~(m | (m - 1)) != 0) {
+		*prefix = 0;  /* prefix zero or can not be calculated */
 		return 1;
 	}
 
