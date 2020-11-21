@@ -27,5 +27,6 @@ int scan_ipv6_range (const char *from, struct ipv6_range *to);
 
 size_t print_ipv6 (char *to, size_t size, const struct in6_addr *from);
 size_t print_ipv6_masked (char *to, size_t size, const struct ipv6_masked *o);
+size_t print_ipv6_range  (char *to, size_t size, const struct ipv6_range  *o);
 
 #endif  /* NET_IPV6_H */

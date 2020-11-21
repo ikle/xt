@@ -118,3 +118,18 @@ size_t print_ipv4_masked (char *to, size_t size, const struct ipv4_masked *o)
 
 	return len + 1 + print_ipv4 (to, size, &o->mask);
 }
+
+size_t print_ipv4_range (char *to, size_t size, const struct ipv4_range *o)
+{
+	size_t len;
+
+	len = print_ipv4 (to, size, &o->start);
+	size = size > len ? size - len : 0;
+	to += len;
+
+	snprintf (to, size, "-");
+	size = size > 1 ? size - 1 : 0;
+	to += 1;
+
+	return len + 1 + print_ipv4 (to, size, &o->stop);
+}
