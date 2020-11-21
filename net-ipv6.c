@@ -165,3 +165,29 @@ size_t print_ipv6 (char *to, size_t size, const struct in6_addr *from)
 
 	return snprintf (to, size, "%s", addr);
 }
+
+size_t print_ipv6_masked (char *to, size_t size, const struct ipv6_masked *o)
+{
+	unsigned prefix = 0;
+	size_t len;
+
+	if (o->prefix == 0)
+		calc_prefix (&o->mask, &prefix);
+
+	len = print_ipv6 (to, size, &o->addr);
+
+	if (prefix == 128)
+		return len;  /* it is a host address */
+
+	size = size > len ? size - len : 0;
+	to += len;
+
+	if (prefix != 0)
+		return len + snprintf (to, size, "/%u", prefix);
+
+	snprintf (to, size, "/");
+	size = size > 1 ? size - 1 : 0;
+	to += 1;
+
+	return len + 1 + print_ipv6 (to, size, &o->mask);
+}
