@@ -36,7 +36,7 @@ static int make_mask (unsigned prefix, struct in_addr *mask)
 
 static int calc_prefix (const struct in_addr *mask, unsigned *prefix)
 {
-	uint32_t m = mask->s_addr;
+	uint32_t m = ntohl (mask->s_addr);
 
 	if (m == 0) {
 		*prefix = 32;
