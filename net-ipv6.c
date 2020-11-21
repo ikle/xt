@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <strings.h>
 
 #include <arpa/inet.h>
 
@@ -57,6 +58,47 @@ m32:	mask->s6_addr32[3] = 0;
 	return 1;
 }
 
+static int calc_prefix (const struct in6_addr *mask, unsigned *prefix)
+{
+	uint32_t a = ntohl (mask->s6_addr[0]);
+	uint32_t b = ntohl (mask->s6_addr[1]);
+	uint32_t c = ntohl (mask->s6_addr[2]);
+	uint32_t d = ntohl (mask->s6_addr[3]);
+
+	if (~a != 0) {
+		if (a == 0 || ~(a | (a - 1) | b | c | d) != 0)
+			goto error;
+
+		*prefix = 33 - ffs (a);  /* NOTE: on POSIX sizeof (int) >= 32 */
+		return 1;
+	}
+
+	if (~b != 0) {
+		if (~(b | (b - 1) | c | d) != 0)
+			goto error;
+
+		*prefix = 65 - ffs (b);
+		return 1;
+	}
+
+	if (~c != 0) {
+		if (~(c | (c - 1) | d) != 0)
+			goto error;
+
+		*prefix = 97 - ffs (c);
+		return 1;
+	}
+
+	if (~(d | (d - 1)) != 0)
+		goto error;
+
+	*prefix = 129 - ffs (d);
+	return 1;
+error:
+	*prefix = 0;  /* prefix zero or can not be calculated */
+	return 1;
+}
+
 int scan_ipv6_masked (const char *from, struct ipv6_masked *to)
 {
 	char addr[IPV6_LEN], mask[IPV6_LEN], tail;
@@ -78,8 +120,8 @@ plain:
 cidr:
 	return make_mask (to->prefix, &to->mask) && scan_ipv6 (addr, &to->addr);
 classic:
-	to->prefix = 0;
-	return scan_ipv6 (addr, &to->addr) && scan_ipv6 (mask, &to->mask);
+	return scan_ipv6 (addr, &to->addr) && scan_ipv6 (mask, &to->mask) &&
+	       calc_prefix (&to->mask, &to->prefix);
 }
 
 static int ipv6_le (const struct in6_addr *a, const struct in6_addr *b)
