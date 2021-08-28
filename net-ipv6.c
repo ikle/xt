@@ -22,7 +22,7 @@
 
 int scan_ipv6 (const char *from, struct in6_addr *to)
 {
-	return inet_pton (AF_INET6, from, to);
+	return inet_pton (AF_INET6, from, to) > 0;
 }
 
 static int make_mask (unsigned prefix, struct in6_addr *mask)

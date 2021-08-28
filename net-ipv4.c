@@ -22,7 +22,7 @@
 
 int scan_ipv4 (const char *from, struct in_addr *to)
 {
-	return inet_pton (AF_INET, from, to);
+	return inet_pton (AF_INET, from, to) > 0;
 }
 
 static int make_mask (unsigned prefix, struct in_addr *mask)
